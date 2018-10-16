@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class Block {
     
     public int index = 0;
-    private int difficulty = 4; //constant value SET HERE !
+    private int difficulty = 4;
     private long timestamp;
     private long nonce;
     public String blockHash;
@@ -30,11 +30,9 @@ public class Block {
     
     public Block(int index, String previousBlockHash, String hashes) throws UnsupportedEncodingException {
         this.index = index;
-        System.out.println("INDEX: "+this.index);
         this.previousBlockHash = previousBlockHash;
         this.timestamp = new Date().getTime();
         this.merkleRoot = hashes;
-        System.out.println("HASHES: " + this.merkleRoot);
         this.blockHash = calculateHash();
     }
 
@@ -50,22 +48,15 @@ public class Block {
     }
     
     public void mineBlock() throws UnsupportedEncodingException {
-        String target = new String(new char[difficulty]).replace('\0', '0'); //Create a string with difficulty * "0" 
+        String target = new String(new char[difficulty]).replace('\0', '0');
 		while(!blockHash.substring( 0, difficulty).equals(target)) {
 			nonce ++;
-                        blockHash = calculateHash();
+            blockHash = calculateHash();
 		}
     }
     
     public boolean addTransaction(Transaction transaction) throws UnsupportedEncodingException {
         if(transaction == null) return false;
-            /*if(transaction.processTransaction() == true) {
-                System.out.println("Transaction added!");
-                transactions.add(transaction);
-                return true;
-            } else {
-                return false;
-            } */
         transactions.add(transaction);
         return true;
     }
