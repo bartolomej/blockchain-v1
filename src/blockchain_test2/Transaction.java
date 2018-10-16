@@ -43,11 +43,7 @@ public class Transaction {
     public String sig;
     public Outputs outputs;
     public Inputs inputs;
-    
-    
-    // COINBASE
-    //public Inputs coinbase_input;
-    
+
     /**
      *
      * @param from
@@ -62,10 +58,8 @@ public class Transaction {
         } else if(type.equals("standard")) {
             this.senderAddr = from;
             this.senderAddress = StringUtil.getStringFromKey(from);
-            //System.out.println("FROM: "+from);
             this.recieverAddr = to;
             this.recieverAddress = StringUtil.getStringFromKey(to);
-            //System.out.print("TO: "+to);
             this.tx_value = value;
         }
     }
@@ -90,18 +84,12 @@ public class Transaction {
                             );
     }
     
-    /*
-     generates signature with private key
-     signature(privateKey, sender + reciever + value)
-    */
     public void generateSignature(PrivateKey privateKey) throws UnsupportedEncodingException {
-        //byte[] signature;
         String data = StringUtil.getStringFromKey(this.senderAddr) + 
                 StringUtil.getStringFromKey(this.recieverAddr) + 
                 Float.toString(tx_value)	;
         this.signature = StringUtil.applyECDSASig(privateKey, data);
         this.sig = new String(this.signature, "UTF-8");
-        //System.out.println(this.sig);
     }
     
     public void generateCoinbaseSig() throws UnsupportedEncodingException {
@@ -110,19 +98,12 @@ public class Transaction {
                 Float.toString(tx_value)	;
         this.signature = StringUtil.applyECDSASig(Coinbase.coinbaseWallet.privateKey, data);
         this.sig = new String(this.signature, "UTF-8");
-        //System.out.println(this.sig);
     }
     
-    /* 
-     verifies signature with public key (sender)
-     verify(sender, sender + reciever + value, signature)
-     used to check if this transaction was created by original creator
-    */
     public boolean verifySignature() throws UnsupportedEncodingException {
         String data = StringUtil.getStringFromKey(this.senderAddr) + 
                 StringUtil.getStringFromKey(this.recieverAddr) + 
                 Float.toString(tx_value);
-        //byte[] signature = sig.getBytes("UTF-8");
         return StringUtil.verifyECDSASig(this.senderAddr, data, this.signature);
     }
     
@@ -133,18 +114,8 @@ public class Transaction {
 		System.out.println("####Transaction Signature failed to verify");
 		return false;
         }
-        
-        System.out.println("Transaction signature verified");
-        //output = new Output(this.senderAddr, this.tx_value);
-        //outputs.put(StringUtil.getStringFromKey(senderAddr), tx_value);
         outputs = new Outputs(this.senderAddr, this.tx_value);
-        //outputs.add(outputs1);
-        //System.out.println("PROCESSTR ... senderAddr: "+TransactionVar.senderAddr);
         inputs = new Inputs(this.recieverAddr, this.tx_value);
-        //System.out.println("PROCESSTR ... senderAddr: "+TransactionVar.recieverAddr);
-        //inputs.put(StringUtil.getStringFromKey(recieverAddr), tx_value);
-        //inputs.add(new Inputs(this.recieverAddr, this.tx_value));
-        
         tx_hash = calculateHash();
         
 	return true;
